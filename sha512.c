@@ -68,23 +68,23 @@ int next_block(FILE *f, union Block *M, enum Status *S, uint64_t *nobits) {
         return 0;
     } else if (*S == READ) {
         // Try to read 64 bytes from the input file.
-        nobytes = fread(M->bytes, 1, 64, f);
+        nobytes = fread(M->bytes, 1, 128, f);
         // Calculate the total bits read so far.
         *nobits = *nobits + (8 * nobytes);
         // Enough room for padding.
-        if (nobytes == 64) {
+        if (nobytes == 128) {
             // This happens when we can read 64 bytes from f.
             // Do nothing.
-        } else if (nobytes < 56) {
+        } else if (nobytes < 112) {
             // This happens when we have enough roof for all the padding.
             // Append a 1 bit (and seven 0 bits to make a full byte).
             M->bytes[nobytes] = 0x80; // In bits: 10000000.
             // Append enough 0 bits, leaving 64 at the end.
-            for (nobytes++; nobytes < 56; nobytes++) {
+            for (nobytes++; nobytes < 112; nobytes++) {
                 M->bytes[nobytes] = 0x00; // In bits: 00000000
             }
             // Append nobits as a big endian integer.
-            M->sixf[7] = *nobits;
+            M->sixf[15] = *nobits;
             // Say this is the last block.
             *S = END;
         } else {
@@ -93,7 +93,7 @@ int next_block(FILE *f, union Block *M, enum Status *S, uint64_t *nobits) {
             // Append a 1 bit (and seven 0 bits to make a full byte.)
             M->bytes[nobytes] = 0x80;
             // Append 0 bits.
-            for (nobytes++; nobytes < 64; nobytes++) {
+            for (nobytes++; nobytes < 128; nobytes++) {
                  // Error: trying to write to 
                 M->bytes[nobytes] = 0x00; // In bits: 00000000
             }
@@ -102,11 +102,11 @@ int next_block(FILE *f, union Block *M, enum Status *S, uint64_t *nobits) {
         }
     } else if (*S == PAD) {
         // Append 0 bits.
-        for (nobytes = 0; nobytes < 56; nobytes++) {
+        for (nobytes = 0; nobytes < 112; nobytes++) {
             M->bytes[nobytes] = 0x00; // In bits: 00000000
         }
         // Append nobits as a big endian integer.
-        M->sixf[7] = *nobits;
+        M->sixf[15] = *nobits;
         // Change the status to END.
         *S = END;
     }
@@ -150,7 +150,7 @@ int next_hash(union Block *M, WORD H[]) {
 }
 
 
-int sha256(FILE *f, WORD H[]) {
+int sha512(FILE *f, WORD H[]) {
     // The function that performs/orchestrates the SHA256 algorithm on
     // message f.
 
@@ -183,12 +183,12 @@ int main(int argc, char *argv[]) {
     // Open file from command line for reading.
     f = fopen(argv[1], "r");
 
-    // Calculate the SHA256 of f.
-    sha256(f, H);
+    // Calculate the sha512 of f.
+    sha512(f, H);
 
     // Print the final SHA256 hash.
-    for (int i = 0; i < 8; i++)
-        printf("%08" PF, H[i]);
+    for (int i = 0; i < 16; i++)
+        printf("%016" PF, H[i]);
     printf("\n");
 
     // Close the file.

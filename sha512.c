@@ -24,11 +24,11 @@
 // SHA256 works on blocks of 512 bits.
 union Block {
     // 8 x 64 = 512 - dealing with block as bytes.
-    BYTE bytes[64];
+    BYTE bytes[128];
     // 32 x 16 = 512 - dealing with block as words.
-    WORD words[16];
+    WORD words[32];
     // 64 x 8 = 512 - dealing with the last 64 bits of last block.
-    uint64_t sixf[8];
+    uint64_t sixf[16];
 };
 
 // For keeping track of where we are with the input message/padding.
@@ -75,12 +75,12 @@ int next_block(FILE *f, union Block *M, enum Status *S, uint64_t *nobits) {
         if (nobytes == 128) {
             // This happens when we can read 64 bytes from f.
             // Do nothing.
-        } else if (nobytes < 112) {
+        } else if (nobytes < 128) {
             // This happens when we have enough roof for all the padding.
             // Append a 1 bit (and seven 0 bits to make a full byte).
             M->bytes[nobytes] = 0x80; // In bits: 10000000.
             // Append enough 0 bits, leaving 64 at the end.
-            for (nobytes++; nobytes < 112; nobytes++) {
+            for (nobytes++; nobytes < 128; nobytes++) {
                 M->bytes[nobytes] = 0x00; // In bits: 00000000
             }
             // Append nobits as a big endian integer.
@@ -102,7 +102,7 @@ int next_block(FILE *f, union Block *M, enum Status *S, uint64_t *nobits) {
         }
     } else if (*S == PAD) {
         // Append 0 bits.
-        for (nobytes = 0; nobytes < 112; nobytes++) {
+        for (nobytes = 0; nobytes < 128; nobytes++) {
             M->bytes[nobytes] = 0x00; // In bits: 00000000
         }
         // Append nobits as a big endian integer.
@@ -116,7 +116,7 @@ int next_block(FILE *f, union Block *M, enum Status *S, uint64_t *nobits) {
 
 
 int next_hash(union Block *M, WORD H[]) {
-  
+
     WORD Y = 0xffffffff;
     // Message schedule, Section 6.2.2
     WORD W[64];
@@ -195,4 +195,4 @@ int main(int argc, char *argv[]) {
     fclose(f);
 
     return 0;
-}
+} 

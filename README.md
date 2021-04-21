@@ -22,8 +22,19 @@ gcc -o sha512 sha512.c
 
 ## Research
 
+#### Q. Why can't we reverse the SHA512 algorithm to retrieve the original message from a hash digest?
+We cannot reverse the SHA512 algortihm due to bit dependency. The reason as to why we cannot retrieve the original message from a hash digest is because it has been constructed to make sure that each bit from the output matches the bit from the input. Since the algorithm has been designed this way it prevents people from reverse engineering the algorithm. To be able to calculate a single output bit you must have knowledge of the contents within the input file.
+
+#### Q. Can you design an algorithm that, given enough time, will find input messages that give each of the possible 512-bit strings?
+
+#### Q. How difficult is it to find a hash digest beginning with at least twelve zeros?
+
+
+
 ## References
 [Ian McLoughlin](https://github.com/ianmcloughlin) - Lecturer, GMIT.
+[Secure Hash Standard](https://www.nist.gov/publications/secure-hash-standard)
+[Git Handbook](https://guides.github.com/introduction/git-handbook/)
 
 
 #### [Author : Aaron Moran (G00356519)](https://github.com/Moran98)

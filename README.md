@@ -27,8 +27,9 @@ We cannot reverse the SHA512 algortihm due to bit dependency. The reason as to w
 
 #### Q. Can you design an algorithm that, given enough time, will find input messages that give each of the possible 512-bit strings?
 
-#### Q. How difficult is it to find a hash digest beginning with at least twelve zeros?
 
+#### Q. How difficult is it to find a hash digest beginning with at least twelve zeros?
+The longer the specific the more difficult.
 
 
 ## References

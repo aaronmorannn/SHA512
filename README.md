@@ -17,7 +17,15 @@ gcc -o sha512 sha512.c
 ./sha512
 ```
 
-## Code Review
+## SHA-512
+The SHA-512 algorithm is a hashing algorithm that performs a hashing function depending on the input data that it receives. Hashing Algorithms have become extremely important and common in regards to digital and online security standards. Its primarily used within the Blockchain. SHA-512 uses 1024 bit blocks and the maximum input string it can accept is 2^128 bits. SHA-512 is very similar in structure to its counterpart SHA-256 but instead the input is broken into 1024 bits and its initial hash values are extended to 64 bits.
+
+The SHA-512 takes a few simple steps to complete its cycle, they are as follows:
+
+* Input Format
+* Hash Buffer
+* Message Processing
+* Output Result 
 
 
 ## Research

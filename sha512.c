@@ -10,13 +10,11 @@
 const int _i = 1;
 #define islilend() ((*(char*)&_i) != 0)
 
-// Page 5 of the secure hash standard.
 #define ROTL(_x,_n) ((_x << _n) | (_x >> ((sizeof(_x)*8) - _n)))
 #define ROTR(_x,_n) ((_x >> _n) | (_x << (64 - _n)))
 
 #define SHR(_x,_n) (_x >> _n)
 
-// Page 10 of the secure hash standard.
 #define CH(_x,_y,_z) ((_x & _y) ^ (~_x & _z))
 #define MAJ(_x,_y,_z) ((_x & _y) ^ (_x & _z) ^ (_y & _z))
 
@@ -41,7 +39,6 @@ enum Status {
     READ, PAD, END
 };
 
-// Section 4.2.2
 const WORD K[] = {
 0x428a2f98d728ae22, 0x7137449123ef65cd, 0xb5c0fbcfec4d3b2f, 0xe9b5dba58189dbbc,
 0x3956c25bf348b538, 0x59f111f1b605d019, 0x923f82a4af194f9b, 0xab1c5ed5da6d8118,
@@ -76,7 +73,7 @@ int next_block(FILE *f, union Block *M, enum Status *S, uint64_t *nobits) {
         // Finish.
         return 0;
     } else if (*S == READ) {
-        // Try to read 64 bytes from the input file.
+        // Try to read 128 bytes from the input file.
         nobytes = fread(M->bytes, 1, 128, f);
         // Calculate the total bits read so far.
         *nobits = *nobits + (8 * nobytes);
@@ -88,7 +85,6 @@ int next_block(FILE *f, union Block *M, enum Status *S, uint64_t *nobits) {
             // This happens when we have enough roof for all the padding.
             // Append a 1 bit (and seven 0 bits to make a full byte).
             M->bytes[nobytes] = 0x80; // In bits: 10000000.
-            // Append enough 0 bits, leaving 64 at the end.
             for (nobytes++; nobytes < 112; nobytes++) {
                 M->bytes[nobytes] = 0x00; // In bits: 00000000
             }
@@ -116,7 +112,7 @@ int next_block(FILE *f, union Block *M, enum Status *S, uint64_t *nobits) {
         }
         // Append nobits as a big endian integer.
         M->sixf[15] = (islilend() ? bswap_64(*nobits) : *nobits);
-        // Change the status to END.
+        // Change the status to END
         *S = END;
     }
 
@@ -132,31 +128,26 @@ int next_block(FILE *f, union Block *M, enum Status *S, uint64_t *nobits) {
 
 int next_hash(union Block *M, WORD H[]) {
 
-    // Message schedule, Section 6.2.2
     WORD W[128];
     // Iterator.
     int t;
     // Temporary variables.
     WORD a, b, c, d, e, f, g, h, T1, T2;
 
-    // Section 6.2.2, part 1.
     for (t = 0; t < 16; t++)
         W[t] = M->words[t];
     for (t = 16; t < 80; t++)
         W[t] = Sig1(W[t-2]) + W[t-7] + Sig0(W[t-15]) + W[t-16];
 
-    // Section 6.2.2, part 2.
     a = H[0]; b = H[1]; c = H[2]; d = H[3];
     e = H[4]; f = H[5]; g = H[6]; h = H[7];
 
-    // Section 6.2.2, part 3.
     for (t = 0; t < 80; t++) {
         T1 = h + SIG1(e) + CH(e, f, g) + K[t] + W[t];
         T2 = SIG0(a) + MAJ(a, b, c);
         h = g; g = f; f = e; e = d + T1; d = c; c = b; b = a; a = T1 + T2;
     }
 
-    // Section 6.2.2, part 4.
     H[0] = a + H[0]; H[1] = b + H[1]; H[2] = c + H[2]; H[3] = d + H[3];
     H[4] = e + H[4]; H[5] = f + H[5]; H[6] = g + H[6]; H[7] = h + H[7];
 
@@ -165,8 +156,6 @@ int next_hash(union Block *M, WORD H[]) {
 
 
 int sha512(FILE *f, WORD H[]) {
-    // The function that performs/orchestrates the SHA256 algorithm on
-    // message f.
 
     // The current block.
     union Block M;
@@ -186,7 +175,6 @@ int sha512(FILE *f, WORD H[]) {
 }
 
 int main(int argc, char *argv[]) {
-    // Section 5.3.4
     WORD H[] = {
         0x6a09e667f3bcc908, 0xbb67ae8584caa73b, 0x3c6ef372fe94f82b, 0xa54ff53a5f1d36f1,
         0x510e527fade682d1, 0x9b05688c2b3e6c1f, 0x1f83d9abfb41bd6b, 0x5be0cd19137e2179
@@ -200,7 +188,7 @@ int main(int argc, char *argv[]) {
     // Calculate the sha512 of f.
     sha512(f, H);
 
-    // Print the final SHA256 hash.
+    // Print the final SHA512 hash.
     for (int i = 0; i < 8; i++)
         printf("%016" PF, H[i]);
     printf("\n");

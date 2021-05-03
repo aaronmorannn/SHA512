@@ -32,7 +32,7 @@ Mary and Samantha arrived at the bus station early but waited until noon for the
 6ed657baaddac9006469da76980926fa83d269b59c37547846563db003486a6664557bd530c89b5650d8754a1a67247263cc948ff8326cdd3a35a48e5539a904
 ````
 
-* The SHA-512 algorithm guarantees that no other string message can generate the same hashed output. This acts almost like a signature or a finger print for the string inputed string.
+* The SHA-512 algorithm guarantees that no other string message can generate the same hashed output. This acts almost like a signature or a finger print for the inputed string.
 
 * The SHA-512 algorithm is extremely important as its used for protecting our digital passwords and email address hashing. The SHA-512 algirthm is still used within industry but has become less popular as bcrypt is now widely used within most web applications that require login details. This does not make the SHA-512 algorithm any less secure than before, but its main purpose is to be used as a cryptographic hash function.
 
@@ -93,6 +93,7 @@ We are then dividing the value by the hashrate of our computer which is typicall
 * [Secure Hash Standard](https://www.nist.gov/publications/secure-hash-standard)
 * [Git Handbook](https://guides.github.com/introduction/git-handbook/)
 * [Secure Hash Algorithms](https://brilliant.org/wiki/secure-hashing-algorithms/)
+* [Mining Bitcoin with pencil and paper: 0.67 hashes per day](http://www.righto.com/2014/09/mining-bitcoin-with-pencil-and-paper.html)
 
 ## Development
 * Visual Studio Code.

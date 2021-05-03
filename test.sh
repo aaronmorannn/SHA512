@@ -1,4 +1,4 @@
-echo "Test to see if fil test.txt exists"
+echo "Testing file test.txt"
 expec = "$(sha512 test.txt)"
 myout = "$(./sha512 test.txt) test.txt"
 
